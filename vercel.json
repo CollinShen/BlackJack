@@ -9,7 +9,7 @@
       "src": "frontend/package.json",
       "use": "@vercel/node",
       "config": { 
-        "nodeVersion": "14.x"
+        "nodeVersion": "20.x"
       }
     }
   ],
