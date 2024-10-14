@@ -6,6 +6,7 @@ const API_URL = 'http://localhost:5000';
 function App() {
   const [gameState, setGameState] = useState(null);
   const [inputValue, setInputValue] = useState('');
+  const [gameLog, setGameLog] = useState([]);
 
   useEffect(() => {
     startGame();
@@ -15,6 +16,10 @@ function App() {
     const response = await fetch(`${API_URL}/start`, { method: 'POST' });
     const data = await response.json();
     setGameState(data);
+    setGameLog([
+      "Welcome to Blackjack!",
+      `Your cards are: ${data.player_hand.join(', ')} with a value of: ${data.player_total}`
+    ]);
   };
 
   const handleAction = async (action) => {
@@ -25,6 +30,7 @@ function App() {
     });
     const data = await response.json();
     setGameState(data);
+    updateGameLog(data);
   };
 
   const handleAceValue = async (value) => {
@@ -35,6 +41,7 @@ function App() {
     });
     const data = await response.json();
     setGameState(data);
+    updateGameLog(data);
     setInputValue('');
   };
 
@@ -44,9 +51,9 @@ function App() {
 
   const handleInputSubmit = (e) => {
     e.preventDefault();
-    if (inputValue === 'y') {
+    if (inputValue.toLowerCase() === 'y') {
       handleAction('hit');
-    } else if (inputValue === 'n') {
+    } else if (inputValue.toLowerCase() === 'n') {
       handleAction('stay');
     } else if (inputValue === '1' || inputValue === '11') {
       handleAceValue(parseInt(inputValue));
@@ -54,15 +61,24 @@ function App() {
     setInputValue('');
   };
 
+  const updateGameLog = (data) => {
+    setGameLog(prevLog => [
+      ...prevLog,
+      `Your hand: ${data.player_hand.join(', ')} (Total: ${data.player_total})`,
+      `Dealer's hand: ${data.dealer_hand.join(', ')} (Total: ${data.dealer_total})`,
+      data.message
+    ]);
+  };
+
   if (!gameState) return <div>Loading...</div>;
 
   return (
     <div className="App">
       <h1>Blackjack</h1>
-      <div className="game-info">
-        <p>Player hand: {gameState.player_hand.join(', ')} (Total: {gameState.player_total})</p>
-        <p>Dealer hand: {gameState.dealer_hand.join(', ')} (Total: {gameState.dealer_total})</p>
-        {gameState.message && <p className="message">{gameState.message}</p>}
+      <div className="game-log">
+        {gameLog.map((log, index) => (
+          <p key={index}>{log}</p>
+        ))}
       </div>
       {!gameState.game_over && (
         <form onSubmit={handleInputSubmit}>
@@ -70,7 +86,7 @@ function App() {
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="Enter your action (y/n) or Ace value (1/11)"
+            placeholder={gameState.player_hand.includes('A') ? "Enter Ace value (1 or 11)" : "Would you like to hit? (y/n)"}
           />
           <button type="submit">Submit</button>
         </form>
