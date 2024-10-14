@@ -4,54 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #game-area {
-            margin-top: 20px;
-        }
-        #game-message {
-            font-weight: bold;
-            margin: 20px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to Blackjack!</h1>
-    <div id="game-area">
-        <p id="game-message">Press "Play" to start the game.</p>
-        <button id="play-button">Play</button>
+    <div id="game-container">
+        <h1>Welcome to Blackjack</h1>
+        <div id="game-output"></div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type your command..." autofocus>
+            <button id="submit-button">Submit</button>
+        </div>
+        <button id="restart-button" style="display: none;">Play Again</button>
     </div>
-
-    <script>
-        document.getElementById('play-button').addEventListener('click', () => {
-            fetch('/play')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('game-message').innerText = data.message;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('game-message').innerText = "An error occurred. Please try again.";
-                });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
